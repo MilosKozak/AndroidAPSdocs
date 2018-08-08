@@ -10,7 +10,7 @@ _If using xdrip…_
 * If you want to be able to use AndroidAPS to calibrate then in xdrip go to Settings > Interapp Compatibility > Accept Calibrations and select ON. You may also want to review the options in Settings > Less Common Settings > Advanced Calibration Settings.
 * Select xdrip in ConfigBuilder (setting in AndroidAPS).
 
-_If using Dexcom G5 App..._  
+_Pokud používáte Dexcom G5 aplikaci..._  
 
 
 * Just dev.
