@@ -1,103 +1,98 @@
-# FAQ for loopers
+# Future (possible) Pump Drivers
 
-How to add questions to the FAQ: Follow the these [instructions](http://androidaps.readthedocs.io/en/latest/make-a-PR.html)
+This is list of some Pumps floating around there, and status of support for them in any of Looping systems and then status in AAPS. On end there is some info, what is required for a pump to be "Loop capable".
 
-## General
+## Medtronic
 
-### How to begin?
+**Loop status:** Some of older versions of pumps are loopable, but not the newer models (see down)
 
-The founding principle of closed looping is that your basal rate and carb ratio is accurate. All recommendations assume that your basal needs are met and any peaks or troughs you're seeing are a result of other factors which therefore require some one off adjustments (exercise, stress etc). The adjustments the closed loop can make for safety have been limited (see maximum allowed temporary basal rate in [OpenAPS Reference Design](https://openaps.org/reference-design/)), which means that you don't want to waste the allowed dosing on correcting a wrong underlying basal. If for example you are frequently low temping on the approach of a meal then it is likely your basal needs adjusting. You can use [autotune](http://openaps.readthedocs.io/en/latest/docs/Customize-Iterate/autotune.html#phase-c-running-autotune-for-suggested-adjustments-without-an-openaps-rig) to consider a large pool of data to suggest whether and how basals and/or ISF need to be adjusted, and also whether carb ratio needs to be changed. Or you can test and set your basal the [old fashioned way](http://integrateddiabetes.com/basal-testing/).
+**Other implementations:** OpenAPS, Loop
 
-### What practicalities of looping do I have?
+**Java implementations:** Partial implementation available [Rountrip2](https://github.com/TC2013/Roundtrip2), and [RileyLinkAAPS](https://github.com/andyrozman/RileyLinkAAPS) - extensions of RT2 is almost complete
 
-* If you don't want your preferences to be easily changed then you can password protect the preferences menu by selecting in the preferences menu "password for settings" and type the password you choose. The next time you go into preferences menu it will ask for that password before going any further. If you later want to remove the password option then go into "password for settings" and delete the text.
+**AAPS implementation status:** Starting. See [Andy's AndroidAPS fork](https://github.com/andyrozman/AndroidAPS), branch riley_link_medtronic (default branch). Status: Base integration done (Medtronic Tab), we have now Medtronic virtual pump. At the moment most of work is being done on [RileyLinkAAPS](https://github.com/andyrozman/RileyLinkAAPS) to get framework and commands working. There is project (Medtronic) and tickets opened for future development on that repository, development is being done on branch dev_medtronic (which is default branch there). There is also gitter room: RileyLinkAAPS/Lobby. Test integration to AAPS is already happening, but its not ready yet for testing.
 
-* If you plan to use the android wear app to bolus or change settings then you need to ensure notifications from AndroidAPS are not blocked. Confirmation of action comes via notification.
+**Hardware requirement for AAPS:** RileyLink
 
-* If you take your pump off for showering/bathing/swimming/sport etc then press and hold on the "Open Loop"/"Closed Loop" text on the main homepage and select "disconnect for..." however many hours you plan to disconnect for. This will set your basal to zero for that time period. The minimum length of time for a disconnection is due to the minimum length of TBRs that can be set on the pump so if you wish to disconnect for a shorter period of time, or you connect your pump sooner than expected then press and hold "Suspended (X mins)" and select "Resume". Your IOB will then be accurate for calculations on your return to the pump.
+**Loopable versions:** 512-522, 523 (Fw 2.4A or lower), 554 (EU firmware 2.6A or lower, CA firmware 2.7A or lower). Same for 7xx versions. All other devices are not supported, and probably won't be.
 
-* For safety, recommendations made are based on not one CGM reading but the average delta. Therefore if you miss some readings it may take a while after getting data back before AndroidAPS kicks in looping again.
+* * *
 
-* There are several blogs with good tips to help you understand the practicalities of looping:
-  
-  * [Fine-tuning Settings](http://seemycgm.com/2017/10/29/fine-tuning-settings/) See my CGM
-  * [Why DIA matters](http://seemycgm.com/2017/08/09/why-dia-matters/) See my CGM
-  * [Limiting meal spikes](https://diyps.org/2016/07/11/picture-this-how-to-do-eating-soon-mode/) #DIYPS
-  * [Hormones and autosens](http://seemycgm.com/2017/06/06/hormones-2/) See my CGM
+## Insulet Omnipod
 
-### What emergency equipment is recommended to take with me?
+**Loop status:** Not supported at the moment, but there is a lot of work going on on decoding the Omnipod protocol - [OpenOmni](http://www.openomni.org/).
 
-### How to savely attach the CGM/FGM?
+**Other implementations:** Loop (implementation is at beggining, as far as I know, they managed to Init the pod, and send the first TBR). See [Openomni on github](https://github.com/openaps/openomni)
 
-## AndroidAPS settings
+**Java implementations:** None.
 
-### APS algorithm
+**AAPS implementation status:** Work has started on [RileyLinkAAPS](https://github.com/andyrozman/RileyLinkAAPS) for Omnipod (dev_omnipod branch), but it is far from working prototype (developer started working on changes needed for RL firmware 2.0). You can follow progress on https://omniaps.slack.com/ channel android-driver. Developer is posting progress there.
 
-#### Why does it show "dia:3" in the "OPENAPS AMA"-tab even though I have a different DIA in my profile?
+**Hardware requirement for AAPS:** RileyLink with Omnipod firmware (2.0)
 
-![AMA 3h](../../images/Screenshot_AMA3h.png) In AMA, dia actually doesn't mean the 'duration of insulin acting'. It is a parameter, which used to connected to the DIA. Now, it means, 'in whích time should the correction be finished'. It has nothing to do with the calculation of the IOB. In OpenAPS SMB, there is no need for this parameter anymore.
+**Comments:** Omnipod DASH is currently not in the plan. Once we have java implementation for standard Omnipod, we will work from that implementation. If (omnipod) protocol hasn't changed, we might have implementation few months later, if protocol has changed then it might take some time.
 
-### Profile
+* * *
 
-#### Why using min. 5h DIA (insulin end time) instead of 2-3h?
+## Ypsomed Pump
 
-Well explained in this [article](/www.diabettech.com/insulin/why-we-are-regularly-wrong-in-the-duration-of-insulin-action-dia-times-we-use-and-why-it-matters/). Don't forget to `ACTIVATE PROFILE` after changing your DIA.
+**Loop status:** Version 1 - 1.5 (2Q/2018) are not Loop candidates. While they do have BT communication, it seems that communication is very limited (uni directional: Pump->App). Maybe this will change in next versions.
 
-## other settings
+**Hardware requirement for AAPS:** Probably none. It's BT enabled.
 
-### Nightscout settings
+* * *
 
-### CGM settings
+## Cellnovo Pump
 
-## Pump
+**Loop status:** Currently not supported by any of loop system. Pump is Loop candidate, but since protocol is unknown at the time, I am not seeing this pump supported very soon.
 
-### Where to place the pump?
+**Hardware requirement for AAPS:** Probably none. It's BT enabled.
 
-### Batteries
+* * *
 
-Looping can reduce the pump battery faster than normal use because the system interacts through bluetooth far more than a manual user does. It is best to change battery at 25% as communication becomes challenging then. You can set warning alarms for pump battery by using the PUMP_WARN_BATT_P variable in your nightscout site. Tricks to increase battery life include:
+## Animas Vibe
 
-* reduce the length of time the LCD stays on (within pump settings menu)
-* reduce the length of time the backlight stays on (within pump settings menu)
-* select notification settings to a beep rather than vibrate (within pump settings menu)
-* only press the buttons on the pump to reload, use AndroidAPS to view all history, battery level and reservoir volume.
-* AndroidAPS app may often be closed to save energy or free RAM on some phones. When AndroidAPS is reinitialized at each startup it establishes a Bluetooth connection to the pump, and re-reads the current basal rate and bolus history. This consumes battery. To see if this is happening, go to Preferences > NSClient and enable 'Log app start to NS'. Nightscout will receive an event at every restart of AndroidAPS, which makes it easy to track the issue. To reduce this happening, whitelist AndroidAPS app in the phone battery settings to stop the app power monitor closing it down.
-* clean battery terminals with alcohol wipe to ensure no manufacturing wax/grease remains.
-* for DanaR/RS pumps the startup procedure draws a high current across the battery to purposefully break the passivation film (prevents loss of energy whilst in storage) but it doesn't always work to break it 100%. Either remove and reinsert battery 2-3 times until it does show 100% on screen, or use battery key to briefly short circuit battery before insertion by applying to both terminals for a split second.
-* see also more tips for [particular types of battery](https://github.com/MilosKozak/AndroidAPS/wiki/Accu-Chek-Combo:-Tipps-for-Basic-usage#battery-type-and-causes-of-short-battery-life) to use for Combo pump
+**Loop status:** Not loopable. No remote control possibility.
 
-### Changing reservoirs and canulas
+* * *
 
-The change of cartridge can not be done via AndroidAPS, but must be carried out as before directly via the pump.
+## Animas Ping
 
-* Long press on "Open Loop"/"Closed Loop" on the Home tab of AndroidAAPS and select 'Suspend Loop for 1h'
-* Now disconnect the pump, and change the reservoir as per pump instructions.
-* Once reconnected to the pump continue the loop by long pressing on 'Suspended (X m)'.
+**Loop status:** Currently not supported by any of Loop systems, but it might be a candidate, since it does have some kind of remote possibility. Since its much older pump, it might never get supported anywhere.
 
-The change of a canula however does not use the "prime infusion set" function of the pump, but fills the infusion set and/or canula using a bolus which does not appear in the bolus history. This means it does not interrupt a currently running temporary basal rate. On the Actions (Act) tab, use the PRIME/FILL button to set the amount of insulin needed to fill the infusion set and start the priming. If the amount is not enough, repeat filling. You can set default amount buttons in the Preferences > Other > Fill/Prime standard insulin amounts. See the instruction booklet in your canula box for how many units should be primed depending on needle length and tubing length.
+* * *
 
-## Hygiene
+## Requirements for pump being loopable
 
-### What to do when taking a shower or bath?
+**Prerequisite**
 
-You can remove the pump while taking a shower or bath. For this short period of time you'll usually won't need it. But you should tell it AAPS so that the IOB calculations are right. Push on the light blue field "Open loop / Closed loop" on top of the homescreen. Select "Disconnect pump for 1 h". Once you have been reconnected your pump you have to select "Continue" in the same field.
+- Pump has to support some kind of remote control. (BT, Radio frequency, etc)
+- Protocol is hacked/documented/etc.
 
-## Working
+**Minimal requirement**
 
-## Leasure activities
+- Set Temporary Basal Rate
+- Get Status
+- Cancel Temporary Basal Rate
 
-## Sports
+**For oref1(SMB) or Bolusing:**
 
-## Sex
+- Set Bolus
 
-## Go out
+**Good to have**
 
-## Drinking alcohol
+- Cancel Bolus
+- Get Basal Profile
+- Set Basal Profile
+- Read History 
 
-## Sleeping
+**Other**
 
-## Travelling
+- Set Extended Bolus
+- Cancel Extended Bolus
 
-## Hospitalization
+* * *
 
-## Medical appointment with your endocrinologist
+## Other pumps support
+
+If you have any other pumps you would like to see status on, please contact me (@andyrozman on gitter). In future release a lot of Pump configurations will be added to be Open loopable (you will be able to select Virtual Pump Type in configuration and your settings will be loaded - [Feature request #863](https://github.com/MilosKozak/AndroidAPS/issues/863)).
