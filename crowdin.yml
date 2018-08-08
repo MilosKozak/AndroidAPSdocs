@@ -2,4 +2,4 @@ files:
   - source: /docs/EN/*.md
     translation: /docs/%two_letters_code%/%original_file_name%
   - source: /docs/EN/*/*.md
-    translation: /docs/%two_letters_code%/%original_file_name%
+    translation: /docs/TEST_%two_letters_code%/%original_file_name%
