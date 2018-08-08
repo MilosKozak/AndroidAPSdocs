@@ -1,30 +1,15 @@
-# Sensitivity Detection and COB options
+# Watchfaces
 
-* Currently we have 3 sensitivity detection models 
-  * Sensitivity Oref0
-  * Sensitivity AAPS
-  * Sensitivity WeightedAverage
+AndroidAPS is designed to be *controlled* by Android Wear watches. To achieve this you needed to select the build variant "fullRelease" when [building the APK](/docs/Installing-AndroidAPS/Building-APK) (or "pumpRelease" will allow you to just remote control the pump without looping). Within AndroidAPS, in the ConfigBuilder you need to enable Wear. You can access the setting by clicking on the cog. If you want to bolus etc from the watch then within Wear Setting you need to enable "Controls from Watch".
 
-### Sensitivity Oref0
+There are several watchfaces to choose from that include average delta, IOB, currently active temp basal rate and basal profiles + CGM readings graph. You can also use the AAPS app on the watch to set a temporary target, administer a bolus, use the bolus wizard, prime/fill, and check the status of loop and pump. Ensure notifications from AndroidAPS are not blocked on the watch. Confirmation of action (e.g. bolus, tempt target) comes via notification which you will need to swipe and tick. To get faster to the AAPS menu, do a double tap on your BG. When doing a double tap onto the BG curve, it will show older/ just newer BG's.
 
-Similiar to Oref0 described in [Oref0 documentation](https://openaps.readthedocs.io/en/2017-05-21/docs/walkthrough/phase-4/advanced-features.html). Basically sensitivity is calculated from 24h data in the past and carbs (if not absorbed) are cutted after time specified in preferences
+Troubleshooting the wear app:
 
-### Sensitivity AAPS
+* On Android Wear 2.0 the watch screen does not install by itself anymore. You need to go into the playstore on the watch (not the same as the phone playstore) and find it in the category apps installed on your phone, from there you can activate it. Also enable auto update. 
+* Sometimes it helps to re-sync the apps to the watch as it can be a bit slow to do it itself: Android Wear > Cog icon > Watch name > Resync apps.
+* Enable ADB debugging in Developer Options (on watch), connect the watch via USB and start the Wear app once in Android Studio.
 
-Sensitivity is calculated the same way like Oref0 but you can specify time to the past. Minimal carbs absorption is calculated from max carbs absorption time from preferences
+If you are using another looping system and want to *view* your looping detail on an AndroidWear watch, or want to watch your child's looping, then you can build/download just the NSClient APK. To do this follow the [build APK instructions](/docs/Installing-AndroidAPS/Building-APK) selecting the build variant "NSClientRelease". There are several watchfaces to choose from that include average delta, IOB, currently active temp basal rate and basal profiles + CGM readings graph.
 
-### Sensitivity WeightedAverage
-
-Sensitivity is calculated as a weighted average from deviations. Newer deviations have higher weight. Minimal carbs absorption is calculated from max carbs absorption time from preferences. This algorithm is fastest in following sensitivity changes.
-
-### COB Examples
-
-Oref0 - unabsorbed carbs are cutted after specified time
-
-![COB from oref0](../../images/cob_oref0.png)
-
-AAPS, WeightedAverage - absorption is calculated to have `COB == 0` after specified time
-
-![COB from AAPS](../../images/cob_aaps.png)
-
-If minimal carbs absorption is used instead of value calculated from deviations, a green dot appears on COB graph
+Pebble users can use the [Urchin watchface](https://github.com/mddub/urchin-cgm) to *view* looping data (if uploaded to nightscout), but you will not be able to interact with AndroidAPS through the watch. You can choose fields to display such as IOB and currently active temp basal rate and predictions. If open looping you can use [IFTTT](https://ifttt.com/) to create an applet that says if Notification received from AndroidAPS then send either SMS or pushover notification.
